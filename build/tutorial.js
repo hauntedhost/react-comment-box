@@ -1,10 +1,7 @@
 /** @jsx React.DOM */
 
 var CommentBox = React.createClass({displayName: 'CommentBox',
-  getInitialState: function () {
-    return { data: [] };
-  },
-  componentWillMount: function () {
+  getComments: function () {
     $.ajax({
       url: 'comments.json',
       dataType: 'json',
@@ -15,6 +12,13 @@ var CommentBox = React.createClass({displayName: 'CommentBox',
         console.error('comments.json', status, err.toString());
       }.bind(this)
     });
+  },
+  getInitialState: function () {
+    return { data: [] };
+  },
+  componentWillMount: function () {
+    this.getComments();
+    setInterval(this.getComments, this.props.pollInterval);
   },
   render: function () {
     return (
@@ -66,6 +70,6 @@ var Comment = React.createClass({displayName: 'Comment',
 });
 
 React.renderComponent(
-  CommentBox( {url:"comments.json"} ),
+  CommentBox( {url:"comments.json", pollInterval:2000} ),
   document.getElementById('content')
 );
