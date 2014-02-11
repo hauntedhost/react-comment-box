@@ -1,0 +1,7 @@
+{
+  "devDependencies": {
+    "gulp": "~3.5.2",
+    "gulp-concat": "~2.1.7",
+    "gulp-react": "~0.1.2"
+  }
+}
