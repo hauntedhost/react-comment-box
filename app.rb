@@ -7,22 +7,44 @@ class App < Sinatra::Base
     erb :index
   end
 
-  get '/comments.json' do
-    comments = store.transaction do |s|
-      s[:comments]
-    end
+  get '/comments' do
     comments.to_json
   end
 
-  post '/comments.json' do
-    author, text = params[:author], params[:text]
-    halt 422 unless author && text
-    comments = store.transaction do |s|
-      s[:comments] << { author: author, text: text }
-      s[:comments]
-    end
+  post '/comments' do
+    add_comment!(params)
     comments.to_json
   end
+
+  delete '/comments' do
+    delete_comment!(params)
+    comments.to_json
+  end
+
+  def comments
+    store.transaction do |s|
+      s[:comments]
+    end
+  end
+
+  def add_comment!(params)
+    author, text = params[:author], params[:text]
+    return false unless author && text
+    store.transaction do |s|
+      s[:comments] = s[:comments] || []
+      s[:comments] << { id: SecureRandom.uuid, author: author, text: text }
+    end
+  end
+
+  def delete_comment!(params)
+    id = params[:id]
+    return false unless id
+    store.transaction do |s|
+      s[:comments] = s[:comments].reject { |comment| comment[:id] == id }
+    end
+  end
+
+  private
 
   def store
     @store ||= PStore.new('db/comments.pstore')
