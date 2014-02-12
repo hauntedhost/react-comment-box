@@ -10,7 +10,7 @@ gulp.task('templates', function () {
         .on('error', gutil.log)
         .on('error', gutil.beep)
         .on('error', notify.onError('ERROR: jsx templates error'))
-      .pipe(gulp.dest('./build'))
+      .pipe(gulp.dest('./public/javascripts'))
       .pipe(notify('jsx templates rebuilt'));
 });
 
