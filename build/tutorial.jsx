@@ -3,33 +3,23 @@
 var CommentBox = React.createClass({
   getComments: function () {
     $.ajax({
-      url: this.props.url,
+      url: this.props.url,zzzxzx;;;
       dataType: 'json',
       success: function (data) {
         this.setState({ data: data });
       }.bind(this),
       error: function (xhr, status, err) {
-        console.error('GET', status, err.toString());
+        console.error('comments.json', status, err.toString());
       }.bind(this)
     });
   },
   handleCommentSubmit: function (comment) {
-    console.log('submitting', comment);
-    var comments = this.state.data;
-    var newComments = comments.concat([comment]);
-    this.setState({ data: newComments });
+    // TODO: submit comment to the server and refresh the list
+    console.log('submitted', comment);
     $.ajax({
       url: this.props.url,
-      dataType: 'json',
-      type: 'POST',
-      data: comment,
-      success: function (data) {
-        this.setState({ data: data });
-      }.bind(this),
-      error: function (xhr, status, err) {
-        console.error('POST', status, err.toString());
-      }.bind(this)
-    });
+
+    })
   },
   getInitialState: function () {
     return { data: [] };

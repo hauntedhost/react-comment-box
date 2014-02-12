@@ -3,13 +3,31 @@
 var CommentBox = React.createClass({displayName: 'CommentBox',
   getComments: function () {
     $.ajax({
-      url: 'comments.json',
+      url: this.props.url,
       dataType: 'json',
       success: function (data) {
         this.setState({ data: data });
       }.bind(this),
       error: function (xhr, status, err) {
-        console.error('comments.json', status, err.toString());
+        console.error('GET', status, err.toString());
+      }.bind(this)
+    });
+  },
+  handleCommentSubmit: function (comment) {
+    console.log('submitting', comment);
+    var comments = this.state.data;
+    var newComments = comments.concat([comment]);
+    this.setState({ data: newComments });
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      type: 'POST',
+      data: comment,
+      success: function (data) {
+        this.setState({ data: data });
+      }.bind(this),
+      error: function (xhr, status, err) {
+        console.error('POST', status, err.toString());
       }.bind(this)
     });
   },
@@ -25,7 +43,7 @@ var CommentBox = React.createClass({displayName: 'CommentBox',
       React.DOM.div( {className:"commentBox"}, 
         React.DOM.h1(null, "Comments"),
         CommentList( {data:this.state.data} ),
-        CommentForm(null )
+        CommentForm( {onCommentSubmit:this.handleCommentSubmit} )
       )
     );
   }
@@ -51,7 +69,7 @@ var CommentForm = React.createClass({displayName: 'CommentForm',
     if (!text || !author) {
       return false;
     }
-    // TODO: send request to server
+    this.props.onCommentSubmit({ author: author, text: text });
     this.refs.author.getDOMNode().value = '';
     this.refs.text.getDOMNode().value = '';
     return false;
